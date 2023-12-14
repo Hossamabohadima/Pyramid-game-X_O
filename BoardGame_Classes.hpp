@@ -28,7 +28,7 @@ public:
     // Display the board and the pieces on it
     virtual void display_board() = 0;
     // Return true if game is over
-    // virtual bool game_is_over() = 0;
+    virtual bool game_is_over() = 0;
 };
 
 ///////////////////////////////////////////
@@ -42,6 +42,7 @@ public:
     void display_board();
     bool is_winner();
     bool is_draw();
+    bool game_is_over();
     ~X_O_Board();
 };
 
@@ -66,7 +67,7 @@ public:
     // Virtual (can change for other player types)
     virtual void get_move(int &x, int &y);
     // Give player info as a string
-    string To_string();
+    string to_string();
     // Get symbol used by player
     char get_symbol();
 };
@@ -82,7 +83,7 @@ protected:
 
 public:
     // Take a symbol and pass it to parent
-    RandomPlayer(char symbol);
+    RandomPlayer(char symbol, int dimension);
     // Generate a random move
     void get_move(int &x, int &y);
 };
