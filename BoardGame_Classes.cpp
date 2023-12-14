@@ -101,6 +101,14 @@ bool X_O_Board::is_draw()
     else
         return false;
 }
+bool X_O_Board ::game_is_over()
+{
+    if (n_moves == 9)
+    {
+        return true;
+    }
+    return false;
+}
 
 X_O_Board::~X_O_Board()
 {
@@ -112,7 +120,10 @@ Player::Player(char symbol) : symbol(symbol)
 }
 Player::Player(int order, char symbol) : symbol(symbol)
 {
-    name = "player " + to_string(order);
+    cout << "Welcome player " << order << endl;
+    cout << "Please enter your name: ";
+    cin >> name;
+    this->symbol = symbol;
 }
 void Player::get_move(int &x, int &y)
 {
@@ -120,7 +131,7 @@ void Player::get_move(int &x, int &y)
          << "Enter your move (x y): ";
     cin >> x >> y;
 }
-string Player::To_string()
+string Player::to_string()
 {
     return (name + " symbol is " + symbol);
 }
@@ -128,9 +139,8 @@ char Player::get_symbol()
 {
     return symbol;
 }
-RandomPlayer::RandomPlayer(char symbol) : Player(symbol)
+RandomPlayer::RandomPlayer(char symbol, int dimension) : Player(symbol), dimension(dimension)
 {
-    dimension = 3;
 }
 
 void RandomPlayer::get_move(int &x, int &y)
@@ -149,14 +159,14 @@ GameManager::GameManager(Board *board, Player *playerPtr[2])
 void GameManager::run()
 {
     int x, y;
-    boardPtr->display_board();
-    while (true)
-    {
 
-        for (size_t i = 0; i < 2; i++)
+    boardPtr->display_board();
+
+    while (!boardPtr->game_is_over())
+    {
+        for (int i : {0, 1})
         {
-            x = 5;
-            y = 5;
+            players[i]->get_move(x, y);
             while (!boardPtr->update_board(x, y, players[i]->get_symbol()))
             {
                 players[i]->get_move(x, y);
@@ -164,19 +174,18 @@ void GameManager::run()
             boardPtr->display_board();
             if (boardPtr->is_winner())
             {
-                cout << "the winner is " << players[i]->To_string() << "\n";
-                cout << "Good luck " << players[i + 1 % 2]->To_string();
+                cout << players[i]->to_string() << " wins\n";
                 return;
             }
-            else if (boardPtr->is_draw())
+            if (boardPtr->is_draw())
             {
-                cout << "good game " << players[i]->To_string() << "\n";
-                cout << "Good game " << players[i + 1 % 2]->To_string();
+                cout << "Draw!\n";
                 return;
             }
         }
     }
 }
+
 GameManager::~GameManager()
 {
     delete boardPtr;
